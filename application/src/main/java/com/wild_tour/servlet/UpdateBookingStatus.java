@@ -1,61 +1,47 @@
 package com.wild_tour.servlet;
 
-	import java.io.IOException;
-	import java.sql.Connection;
-	import java.sql.DriverManager;
-	import java.sql.PreparedStatement;
-	import java.sql.SQLException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-	import jakarta.servlet.ServletException;
-	import jakarta.servlet.annotation.WebServlet;
-	import jakarta.servlet.http.HttpServlet;
-	import jakarta.servlet.http.HttpServletRequest;
-	import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-	@WebServlet("/updateBookingStatus")
-	public class UpdateBookingStatus extends HttpServlet {
-	    
+import com.wild_tour.connection.Connector;
 
-	    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	            throws ServletException, IOException {
-	        
-	        String bookingIdStr = request.getParameter("bookingId");
-	        String action = request.getParameter("action");
+@WebServlet("/updateBookingStatus")
+public class UpdateBookingStatus extends HttpServlet {
 
-	        if (bookingIdStr == null || action == null) {
-	            response.sendRedirect("trip_management.jsp");
-	            return;
-	        }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	        int bookingId = Integer.parseInt(bookingIdStr);
+        String bookingIdStr = request.getParameter("bookingId");
+        String action = request.getParameter("action");
 
-	        Connection con = null;
-	        PreparedStatement ps = null;
+        if (bookingIdStr == null || action == null) {
+            response.sendRedirect("trip_management.jsp");
+            return;
+        }
 
-	        try {
-	            Class.forName("com.mysql.cj.jdbc.Driver");
-	            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/wildlife", "root", "penta@123");
+        int bookingId = Integer.parseInt(bookingIdStr);
 
-	            String query = "UPDATE booking SET status = ? WHERE booking_id = ?";
-	            ps = con.prepareStatement(query);
-	            ps.setString(1, action);
-	            ps.setInt(2, bookingId);
-	            ps.executeUpdate();
+        String query = "UPDATE booking SET status = ? WHERE booking_id = ?";
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        } finally {
-	            try {
-	                if (ps != null) ps.close();
-	                if (con != null) con.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
+        try (Connection con = Connector.requestConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
 
-	        response.sendRedirect("trip_management.jsp");
-	    }
-	}
+            ps.setString(1, action);
+            ps.setInt(2, bookingId);
+            ps.executeUpdate();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
+        response.sendRedirect("trip_management.jsp");
+    }
+}

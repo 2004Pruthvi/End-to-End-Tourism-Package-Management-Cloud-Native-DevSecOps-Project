@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, com.wild_tour.connection.Connector" %>
 
 <html>
 <head>
@@ -69,7 +69,7 @@
 
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                con = DriverManager.getConnection("jdbc:mysql://localhost:3306/wildlife", "root", "penta@123");
+                con = Connector.requestConnection();
 
                 String sql = "SELECT b.*, u.user_name AS tourist_name FROM booking b JOIN user u ON b.user_id = u.user_id ORDER BY b.booked_date DESC";
                 ps = con.prepareStatement(sql);

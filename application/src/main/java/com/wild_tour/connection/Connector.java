@@ -5,25 +5,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Connector {
-	public static Connection requestConnection() {
-		Connection con=null;
-		String url="jdbc:mysql://localhost:3306/wildlife";
-		String user="root";
-		String password="vishwas";
-		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			
-			con=DriverManager.getConnection(url, user, password);
-			
-			
-			
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return con;
-	}
+
+    public static Connection requestConnection() {
+        Connection con = null;
+
+        String url = System.getenv("DB_URL");
+        String user = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            con = DriverManager.getConnection(url, user, password);
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+
+        return con;
+    }
 }
-
-

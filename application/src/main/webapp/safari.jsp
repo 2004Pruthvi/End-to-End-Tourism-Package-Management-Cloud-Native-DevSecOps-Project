@@ -1,4 +1,4 @@
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, com.wild_tour.connection.Connector" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -109,7 +109,7 @@
 
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/wildlife", "root", "vishwas");
+        conn = Connector.requestConnection();
 
         String query = "SELECT safari_id, name, description, price_per_seat, image_url FROM safari";
         ps = conn.prepareStatement(query);
