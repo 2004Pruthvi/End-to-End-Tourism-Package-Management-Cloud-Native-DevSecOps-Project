@@ -1,0 +1,34 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: wild-tour-mysql
+    environment:
+      MYSQL_DATABASE: wildlife
+      MYSQL_USER: wildlife-docker
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./application/wildlife.sql:/docker-entrypoint-initdb.d/wildlife.sql:ro
+    networks:
+      - wild-tour-network
+
+  wild-tour-app:
+    image: wild-tour:phase3
+    container_name: wild-tour-app
+    depends_on:
+      - mysql-db
+    environment:
+      DB_URL: jdbc:mysql://mysql-db:3306/wildlife
+      DB_USER: wildlife-docker
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - wild-tour-network
+
+networks:
+  wild-tour-network:
+
+volumes:
+  mysql_data:
