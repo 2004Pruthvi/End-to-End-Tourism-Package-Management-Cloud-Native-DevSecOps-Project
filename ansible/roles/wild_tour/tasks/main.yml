@@ -1,0 +1,22 @@
+---
+- name: Ensure Git is installed
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: true
+
+- name: Ensure Java 17 is installed
+  ansible.builtin.apt:
+    name: openjdk-17-jdk
+    state: present
+
+- name: Ensure Docker service is running and enabled
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ensure Wild Tour application is running
+  community.docker.docker_compose_v2:
+    project_src: "{{ project_dir }}"
+    state: present

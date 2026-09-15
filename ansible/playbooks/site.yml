@@ -1,0 +1,10 @@
+---
+- name: Configure Wild Tour application server
+  hosts: app
+  become: true
+
+  vars:
+    project_dir: /home/ubuntu/wild-tour-devops
+
+  roles:
+    - wild_tour
