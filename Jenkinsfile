@@ -26,9 +26,12 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t wild-tour:jenkins .'
+                sh '''
+                    docker tag wild-tour:jenkins wild-tour:previous || true
+                    docker build -t wild-tour:jenkins .
+                '''
             }
-        }
+        } 
 
 	stage('Approval') {
             steps {
