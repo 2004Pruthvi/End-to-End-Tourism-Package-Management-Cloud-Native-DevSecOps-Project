@@ -66,6 +66,12 @@ pipeline {
                     curl --fail --silent --show-error http://localhost:8080/Wild_Tour/ > /dev/null
                 '''
             }
+
+            post {
+                failure {
+                    echo 'Deployment verification failed.'
+                }
+            }
         }
     }
 }
