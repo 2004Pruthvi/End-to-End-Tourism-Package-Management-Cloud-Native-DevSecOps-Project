@@ -44,7 +44,6 @@ pipeline {
                     passwordVariable: 'DB_PASSWORD'
                 )]) {
                     sh '''
-                        docker tag wild-tour:jenkins wild-tour:previous || true
                         docker rm -f wild-tour-app || true
                         docker run -d \
                           --name wild-tour-app \
