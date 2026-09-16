@@ -46,6 +46,7 @@ pipeline {
                           -e DB_USER="$DB_USER" \
                           -e DB_PASSWORD="$DB_PASSWORD" \
                           wild-tour:jenkins
+			docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
                     '''
                 }
             }
