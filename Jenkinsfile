@@ -30,6 +30,12 @@ pipeline {
             }
         }
 
+	stage('Approval') {
+            steps {
+                input message: 'Deploy this build to the application server?', ok: 'Deploy'
+            }
+        }
+
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(
