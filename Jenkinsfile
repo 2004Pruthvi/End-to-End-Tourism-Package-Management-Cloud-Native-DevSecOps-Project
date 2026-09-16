@@ -1,17 +1,7 @@
 pipeline {
     agent any
 
-    tools {
-        git 'Git'
-    }
-
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/2004Pruthvi/wild-tour-devops.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 dir('application') {
