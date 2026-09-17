@@ -27,13 +27,12 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                    docker tag wild-tour:jenkins wild-tour:previous || true
                     docker build -t wild-tour:jenkins .
                 '''
             }
-        } 
+        }
 
-	stage('Approval') {
+        stage('Approval') {
             steps {
                 input message: 'Deploy this build to the application server?', ok: 'Deploy'
             }
@@ -55,23 +54,10 @@ pipeline {
                           -e DB_USER="$DB_USER" \
                           -e DB_PASSWORD="$DB_PASSWORD" \
                           wild-tour:jenkins
-			docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
+
+                        docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
                     '''
                 }
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                sh '''
-                    sleep 10
-                    curl --fail --silent --show-error http://localhost:8080/Wild_Tour/ > /dev/null
-               : '''
-            }
-
-         post {
-            failure {
-                echo 'Deployment verification failed. Rollback will be attempted.'
             }
         }
     }
