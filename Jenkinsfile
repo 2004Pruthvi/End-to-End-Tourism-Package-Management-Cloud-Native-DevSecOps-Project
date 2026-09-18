@@ -27,7 +27,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                    docker build -t wild-tour:jenkins .
+                    docker build -t wild-tour:jenkins-${BUILD_NUMBER} .
                 '''
             }
         }
