@@ -61,14 +61,35 @@ pipeline {
             }
         }
     }
-
     post {
         success {
-            echo 'Wild Tour CI/CD pipeline completed successfully.'
+            emailext(
+                subject: "Wild Tour CI/CD - SUCCESS - Build #${BUILD_NUMBER}",
+                body: """
+    Wild Tour CI/CD pipeline completed successfully.
+
+    Project: ${JOB_NAME}
+    Build: #${BUILD_NUMBER}
+    Status: ${currentBuild.currentResult}
+    Build URL: ${BUILD_URL}
+    """,
+                to: "pruthviraj462004@gmail.com"
+            )
         }
 
         failure {
-            echo 'Wild Tour CI/CD pipeline failed.'
+            emailext(
+                subject: "Wild Tour CI/CD - FAILURE - Build #${BUILD_NUMBER}",
+                body: """
+    Wild Tour CI/CD pipeline failed.
+
+    Project: ${JOB_NAME}
+    Build: #${BUILD_NUMBER}
+    Status: ${currentBuild.currentResult}
+    Build URL: ${BUILD_URL}
+    """,
+                to: "pruthviraj462004@gmail.com"
+            )
         }
     }
 }
