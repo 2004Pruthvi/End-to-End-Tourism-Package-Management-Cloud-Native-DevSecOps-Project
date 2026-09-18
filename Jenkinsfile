@@ -60,5 +60,14 @@ pipeline {
                 }
             }
         }
+
+    post {
+        success {
+            echo 'Wild Tour CI/CD pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Wild Tour CI/CD pipeline failed.'
+        }
     }
 }
