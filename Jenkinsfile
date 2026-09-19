@@ -38,6 +38,21 @@ pipeline {
             }
         }
 
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                    ECR_REGISTRY="229032673310.dkr.ecr.ap-south-1.amazonaws.com"
+                    ECR_REPOSITORY="wild-tour"
+                    IMAGE_TAG="jenkins-${BUILD_NUMBER}"
+
+                    aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
+                    docker tag "wild-tour:${IMAGE_TAG}" "$ECR_REGISTRY/$ECR_REPOSITORY:${IMAGE_TAG}"
+                    docker push "$ECR_REGISTRY/$ECR_REPOSITORY:${IMAGE_TAG}"
+                '''
+            }
+        }
+
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(
