@@ -80,6 +80,7 @@ pipeline {
 
                     docker run -d \
                       --name wild-tour-app \
+                      --restart unless-stopped \
                       -p 8080:8080 \
                       -e DB_URL="jdbc:mysql://database-wild-tour.cfyo6wgou1au.ap-south-1.rds.amazonaws.com:3306/wildlife" \
                       -e DB_USER="$DB_USER" \
@@ -92,6 +93,7 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             emailext(
