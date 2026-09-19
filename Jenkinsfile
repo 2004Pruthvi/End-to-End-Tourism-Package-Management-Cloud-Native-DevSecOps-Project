@@ -61,6 +61,9 @@ pipeline {
                     passwordVariable: 'DB_PASSWORD'
                 )]) {
                     sh '''
+                        ECR_IMAGE="229032673310.dkr.ecr.ap-south-1.amazonaws.com/wild-tour:jenkins-${BUILD_NUMBER}"
+
+                        docker pull "$ECR_IMAGE"
                         docker rm -f wild-tour-app || true
                         docker run -d \
                           --name wild-tour-app \
@@ -68,7 +71,7 @@ pipeline {
                           -e DB_URL="jdbc:mysql://database-wild-tour.cfyo6wgou1au.ap-south-1.rds.amazonaws.com:3306/wildlife" \
                           -e DB_USER="$DB_USER" \
                           -e DB_PASSWORD="$DB_PASSWORD" \
-                          wild-tour:jenkins-${BUILD_NUMBER}
+                          "$ECR_IMAGE"
 
                         docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
                     '''
