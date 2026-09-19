@@ -45,6 +45,10 @@ pipeline {
                     ECR_REPOSITORY="wild-tour"
                     IMAGE_TAG="jenkins-${BUILD_NUMBER}"
 
+                     DOCKER_CONFIG="$(mktemp -d)"
+                     export DOCKER_CONFIG
+                     trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+
                     aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
                     docker tag "wild-tour:${IMAGE_TAG}" "$ECR_REGISTRY/$ECR_REPOSITORY:${IMAGE_TAG}"
@@ -53,28 +57,37 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+	stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'wild-tour-db',
-                    usernameVariable: 'DB_USER',
-                    passwordVariable: 'DB_PASSWORD'
+                credentialsId: 'wild-tour-db',
+                usernameVariable: 'DB_USER',
+                passwordVariable: 'DB_PASSWORD'
                 )]) {
-                    sh '''
-                        ECR_IMAGE="229032673310.dkr.ecr.ap-south-1.amazonaws.com/wild-tour:jenkins-${BUILD_NUMBER}"
+                sh '''
+                    ECR_REGISTRY="229032673310.dkr.ecr.ap-south-1.amazonaws.com"
+                    ECR_IMAGE="$ECR_REGISTRY/wild-tour:jenkins-${BUILD_NUMBER}"
 
-                        docker pull "$ECR_IMAGE"
-                        docker rm -f wild-tour-app || true
-                        docker run -d \
-                          --name wild-tour-app \
-                          -p 8080:8080 \
-                          -e DB_URL="jdbc:mysql://database-wild-tour.cfyo6wgou1au.ap-south-1.rds.amazonaws.com:3306/wildlife" \
-                          -e DB_USER="$DB_USER" \
-                          -e DB_PASSWORD="$DB_PASSWORD" \
-                          "$ECR_IMAGE"
+                    DOCKER_CONFIG="$(mktemp -d)"
+                    export DOCKER_CONFIG
+                    trap 'rm -rf "$DOCKER_CONFIG"' EXIT
 
-                        docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
-                    '''
+                    aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
+                    docker pull "$ECR_IMAGE"
+
+                    docker rm -f wild-tour-app || true
+
+                    docker run -d \
+                      --name wild-tour-app \
+                      -p 8080:8080 \
+                      -e DB_URL="jdbc:mysql://database-wild-tour.cfyo6wgou1au.ap-south-1.rds.amazonaws.com:3306/wildlife" \
+                      -e DB_USER="$DB_USER" \
+                      -e DB_PASSWORD="$DB_PASSWORD" \
+                      "$ECR_IMAGE"
+
+                    docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
+                '''
                 }
             }
         }
