@@ -105,3 +105,35 @@ The Jenkins pipeline has been verified successfully with:
 - Gmail email notification
 Result
 The Wild Tour project now has an automated GitHub → Jenkins CI/CD workflow with a manual deployment approval gate and email notifications.
+
+
+
+## Amazon ECR Integration
+
+Jenkins publishes a build-specific Docker image to the private Amazon ECR repository.
+
+### Repository Details
+
+- AWS Region: ap-south-1
+- ECR Repository: wild-tour
+- Image tag format: jenkins-${BUILD_NUMBER}
+- ECR URI: 229032673310.dkr.ecr.ap-south-1.amazonaws.com/wild-tour
+
+### Publishing and Deployment Workflow
+
+After manual deployment approval, Jenkins:
+
+1. Authenticates to ECR using the EC2 instance IAM role.
+2. Pushes the build-specific Docker image to ECR.
+3. Pulls the image from ECR for deployment.
+4. Replaces the running application container with the ECR image.
+5. Verifies that the new container is running.
+
+No long-lived AWS access keys are stored in the Jenkinsfile.
+
+### Verification
+
+- Build #40 successfully pushed image tag jenkins-40 to ECR.
+- Build #41 successfully pushed image tag jenkins-41.
+- Build #41 pulled the image from ECR and deployed it successfully.
+- Build #41 finished with SUCCESS, and the pipeline email notification was sent.
