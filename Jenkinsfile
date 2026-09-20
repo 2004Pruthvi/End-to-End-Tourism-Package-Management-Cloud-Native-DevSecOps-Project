@@ -24,6 +24,18 @@ pipeline {
             }
         }
 
+        stage('Publish JaCoCo Report') {
+	    steps {
+		publishHTML(target: [
+		    reportDir: 'application/target/site/jacoco',
+		    reportFiles: 'index.html',
+		    reportName: 'JaCoCo Coverage Report',
+		    keepAll: true,
+		    alwaysLinkToLastBuild: true,
+		    allowMissing: false
+		])
+	    }
+	}
         stage('Docker Build') {
             steps {
                 sh '''
