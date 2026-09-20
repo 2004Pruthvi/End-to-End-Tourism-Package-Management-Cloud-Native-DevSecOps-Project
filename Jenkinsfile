@@ -87,7 +87,27 @@ pipeline {
                       -e DB_PASSWORD="$DB_PASSWORD" \
                       "$ECR_IMAGE"
 
-                    docker inspect -f '{{.State.Running}}' wild-tour-app | grep -q true
+                      for i in $(seq 1 30); do
+			  STATUS=$(docker inspect -f '{{.State.Health.Status}}' wild-tour-app)
+			  echo "Container health: $STATUS"
+
+			  if [ "$STATUS" = "healthy" ]; then
+			      echo "Deployment successful: container is healthy"
+			      exit 0
+			  fi
+
+			  if [ "$STATUS" = "unhealthy" ]; then
+		              echo "Deployment failed: container is unhealthy"
+			      docker inspect -f '{{json .State.Health}}' wild-tour-app
+			      exit 1
+			  fi
+
+			  sleep 10
+		      done
+
+		      echo "Deployment failed: health check timed out"
+		      docker inspect -f '{{json .State.Health}}' wild-tour-app
+		      exit 1
                 '''
                 }
             }
