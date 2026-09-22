@@ -13,7 +13,11 @@ public class SafariDAOImpl implements SafariDAO {
     private Connection con;
 
     public SafariDAOImpl() {
-        this.con = Connector.requestConnection();
+        this(Connector.requestConnection());
+    }
+
+    SafariDAOImpl(Connection con) {
+        this.con = con;
     }
 
     @Override

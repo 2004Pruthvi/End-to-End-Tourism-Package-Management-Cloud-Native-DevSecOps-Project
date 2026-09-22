@@ -13,7 +13,11 @@ public class BookingDAOImpl implements BookingDAO {
     private Connection con;
 
     public BookingDAOImpl() {
-        this.con = Connector.requestConnection();
+        this(Connector.requestConnection());
+    }
+
+    BookingDAOImpl(Connection con) {
+        this.con = con;
     }
 
     @Override

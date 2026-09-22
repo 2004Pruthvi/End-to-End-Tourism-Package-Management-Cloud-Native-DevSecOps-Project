@@ -12,7 +12,11 @@ public class GuideDAOImpl implements GuideDAO{
 	private Connection con;
 
     public GuideDAOImpl() {
-        this.con = Connector.requestConnection();
+        this(Connector.requestConnection());
+    }
+
+    GuideDAOImpl(Connection con) {
+        this.con = con;
     }
 
 	@Override

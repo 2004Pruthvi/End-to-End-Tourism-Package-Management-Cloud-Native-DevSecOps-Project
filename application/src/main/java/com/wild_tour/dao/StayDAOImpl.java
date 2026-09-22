@@ -13,7 +13,11 @@ public class StayDAOImpl implements StayDAO {
     private Connection con;
 
     public StayDAOImpl() {
-        this.con = Connector.requestConnection();
+        this(Connector.requestConnection());
+    }
+
+    StayDAOImpl(Connection con) {
+        this.con = con;
     }
 
     @Override

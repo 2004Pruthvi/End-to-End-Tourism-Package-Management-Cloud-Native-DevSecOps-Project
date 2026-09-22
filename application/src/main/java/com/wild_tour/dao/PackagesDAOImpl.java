@@ -13,7 +13,11 @@ public class PackagesDAOImpl implements PackagesDAO {
     private Connection con;
 
     public PackagesDAOImpl() {
-        this.con = Connector.requestConnection();
+        this(Connector.requestConnection());
+    }
+
+    PackagesDAOImpl(Connection con) {
+        this.con = con;
     }
 
     @Override
