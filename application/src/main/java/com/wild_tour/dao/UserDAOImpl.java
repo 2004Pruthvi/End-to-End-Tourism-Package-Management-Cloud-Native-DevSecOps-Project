@@ -14,9 +14,13 @@ import com.wild_tour.dto.User;
 public class UserDAOImpl implements UserDAO{
 	private Connection con;
 
-    public UserDAOImpl() {
-        this.con = Connector.requestConnection();
-    }
+        public UserDAOImpl() {
+            this(Connector.requestConnection());
+        }
+
+        UserDAOImpl(Connection con) {
+            this.con = con;
+        }
 
 
 	@Override
