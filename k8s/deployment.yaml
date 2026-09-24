@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wild-tour
-  namespace: default
+  namespace: wild-tour
   labels:
     app: wild-tour
 spec:
