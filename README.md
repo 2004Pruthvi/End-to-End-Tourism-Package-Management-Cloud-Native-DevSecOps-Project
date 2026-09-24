@@ -57,3 +57,36 @@ The repository structure will evolve with each implementation phase.
 ## Current Release
 
 `v0.1.0` — Wild Tour application baseline
+## Amazon EKS (Kubernetes)
+
+### Current Implementation
+
+- Amazon EKS cluster: `wild-tour-eks`
+- AWS Region: `ap-south-1`
+- Kubernetes version: `1.36`
+- Managed node group: `wild-tour-ng-small`
+- Container image: Amazon ECR (`wild-tour:jenkins-56`)
+- Kubernetes manifests are maintained in the `k8s/` directory.
+
+### Kubernetes Manifests
+
+| File | Purpose |
+|---|---|
+| `k8s/configmap.yaml` | Application database URL |
+| `k8s/deployment.yaml` | Wild Tour Deployment, 2 replicas, resource requests/limits, readiness probe |
+| `k8s/service.yaml` | Internal ClusterIP Service |
+
+### Validation
+
+The ConfigMap, Deployment, and Service manifests passed
+Kubernetes API server-side dry-run validation.
+
+### Deployment Status
+
+The Wild Tour workload has not yet been deployed to EKS.
+RDS is intentionally stopped. Database credentials have not
+been added to a Kubernetes Secret, and EKS-to-RDS access
+has not been configured.
+
+Application deployment is pending database connectivity
+and secure credential configuration.
