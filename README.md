@@ -72,14 +72,14 @@ The repository structure will evolve with each implementation phase.
 
 | File | Purpose |
 |---|---|
+| `k8s/namespace.yaml` | Dedicated `wild-tour` namespace |
 | `k8s/configmap.yaml` | Application database URL |
 | `k8s/deployment.yaml` | Wild Tour Deployment, 2 replicas, resource requests/limits, readiness probe |
 | `k8s/service.yaml` | Internal ClusterIP Service |
 
 ### Validation
 
-The ConfigMap, Deployment, and Service manifests passed
-Kubernetes API server-side dry-run validation.
+The Namespace, ConfigMap, Deployment, and Service manifests passed Kubernetes client-side dry-run validation.
 
 ### Deployment Status
 
