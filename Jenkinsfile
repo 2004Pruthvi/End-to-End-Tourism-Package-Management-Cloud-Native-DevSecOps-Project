@@ -83,7 +83,7 @@ pipeline {
                     kubectl -n wild-tour rollout status deployment/wild-tour --timeout=5m
 
                     kubectl -n wild-tour get deployment wild-tour \
-                        -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+                        -o jsonpath='{.spec.template.spec.containers[0].image}'
 
                     echo "Kubernetes deployment successful."
                 '''
