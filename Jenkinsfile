@@ -71,57 +71,22 @@ pipeline {
 
 	stage('Deploy') {
             steps {
-                withCredentials([usernamePassword(
-                credentialsId: 'wild-tour-db',
-                usernameVariable: 'DB_USER',
-                passwordVariable: 'DB_PASSWORD'
-                )]) {
                 sh '''
                     ECR_REGISTRY="229032673310.dkr.ecr.ap-south-1.amazonaws.com"
                     ECR_IMAGE="$ECR_REGISTRY/wild-tour:jenkins-${BUILD_NUMBER}"
 
-                    DOCKER_CONFIG="$(mktemp -d)"
-                    export DOCKER_CONFIG
-                    trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+                    echo "Updating Kubernetes deployment to: $ECR_IMAGE"
 
-                    aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+                    kubectl -n wild-tour set image deployment/wild-tour \
+                        wild-tour="$ECR_IMAGE"
 
-                    docker pull "$ECR_IMAGE"
+                    kubectl -n wild-tour rollout status deployment/wild-tour --timeout=5m
 
-                    docker rm -f wild-tour-app || true
+                    kubectl -n wild-tour get deployment wild-tour \
+                        -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
 
-                    docker run -d \
-                      --name wild-tour-app \
-                      --restart unless-stopped \
-                      -p 8080:8080 \
-                      -e DB_URL="jdbc:mysql://database-wild-tour.cfyo6wgou1au.ap-south-1.rds.amazonaws.com:3306/wildlife" \
-                      -e DB_USER="$DB_USER" \
-                      -e DB_PASSWORD="$DB_PASSWORD" \
-                      "$ECR_IMAGE"
-
-                      for i in $(seq 1 30); do
-			  STATUS=$(docker inspect -f '{{.State.Health.Status}}' wild-tour-app)
-			  echo "Container health: $STATUS"
-
-			  if [ "$STATUS" = "healthy" ]; then
-			      echo "Deployment successful: container is healthy"
-			      exit 0
-			  fi
-
-			  if [ "$STATUS" = "unhealthy" ]; then
-		              echo "Deployment failed: container is unhealthy"
-			      docker inspect -f '{{json .State.Health}}' wild-tour-app
-			      exit 1
-			  fi
-
-			  sleep 10
-		      done
-
-		      echo "Deployment failed: health check timed out"
-		      docker inspect -f '{{json .State.Health}}' wild-tour-app
-		      exit 1
+                    echo "Kubernetes deployment successful."
                 '''
-                }
             }
         }
     }
