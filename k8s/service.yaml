@@ -4,7 +4,7 @@ metadata:
   name: wild-tour
   namespace: wild-tour
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: wild-tour
   ports:
