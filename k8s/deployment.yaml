@@ -15,9 +15,15 @@ spec:
         labels:
           app: wild-tour
       spec:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
         containers:
           - name: wild-tour
-            image: 229032673310.dkr.ecr.ap-south-1.amazonaws.com/wild-tour:jenkins-56
+            securityContext:
+              allowPrivilegeEscalation: false
+            image: 229032673310.dkr.ecr.ap-south-1.amazonaws.com/wild-tour:nonroot-1
             ports:
               - name: http
                 containerPort: 8080
