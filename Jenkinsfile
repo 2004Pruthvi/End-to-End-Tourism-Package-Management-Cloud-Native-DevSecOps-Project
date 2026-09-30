@@ -64,7 +64,7 @@ pipeline {
                     set -eu
 
                     echo "Building Docker image: wild-tour:${IMAGE_TAG}"
-                    docker build --pull -t "wild-tour:${IMAGE_TAG}" .
+                    docker build -t "wild-tour:${IMAGE_TAG}" .
 
                     echo "Verifying Docker image..."
                     docker image inspect "wild-tour:${IMAGE_TAG}" > /dev/null
@@ -109,7 +109,7 @@ Target environment: production (EKS cluster wild-tour-eks, ${env.AWS_REGION})"""
                     docker push "$ECR_IMAGE"
 
                     echo "Verifying pushed image..."
-                    DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "$ECR_IMAGE")"
+                    DIGEST="$(docker inspect --format='{{if .RepoDigests}}{{index .RepoDigests 0}}{{end}}' "$ECR_IMAGE")"
                     if [ -z "$DIGEST" ]; then
                         echo "ERROR: could not verify pushed image digest."
                         exit 1
